@@ -1,6 +1,6 @@
 # ContactGrid
 
-A 2D Spatial Indexing library that utilizes a fixed grid to optimize spatial queries.
+A C# 2D Spatial Indexing library that utilizes a fixed grid to optimize spatial queries.
 Written with Unity in mind (uses Vector2 and some Mathf functions). But is easily ported to support other environments as well.
 
 ## Usage
