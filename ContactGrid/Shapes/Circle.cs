@@ -56,7 +56,7 @@ namespace ContactGrid
         /// </summary>
         public bool NoContactCertainty(IConvexShape shape)
         {
-            return shape.DistanceSquared(center) >= radius * radius;
+            return shape.DistanceSquared(center) > radius * radius;
         }
 
         /// <summary>
