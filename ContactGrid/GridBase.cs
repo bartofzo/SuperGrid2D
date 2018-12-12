@@ -399,7 +399,9 @@ namespace ContactGrid
                     if (!wrapper.Once(queryNumber))
                         continue;
 
-                    if (predicate(wrapper.Unit) && !shape.NoContactCertainty(wrapper.Shape) && !wrapper.Shape.NoContactCertainty(shape))
+                    if (!shape.NoContactCertainty(wrapper.Shape) && 
+                        !wrapper.Shape.NoContactCertainty(shape) &&
+                        predicate(wrapper.Unit))
                         yield return wrapper.Unit;
                 }
             }
