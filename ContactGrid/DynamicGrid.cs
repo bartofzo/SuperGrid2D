@@ -137,7 +137,7 @@ namespace ContactGrid
         /// <summary>
         /// Uses a dictionary
         /// </summary>
-        public class DynamicCell : BaseSearchGridCell
+        public class DynamicCell : CellBase
         {
             protected override IEnumerable<UnitWrapper> _unitWrappers => _unitDictionary.Values;
             private Dictionary<TKey, UnitWrapper> _unitDictionary = new Dictionary<TKey, UnitWrapper>();

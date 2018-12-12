@@ -35,8 +35,8 @@ namespace ContactGrid
         float Width { get; }
         float Height { get; }
         Vector2 CellSize { get; }
-        int HorizontalCells { get; }
-        int VerticalCells { get; }
+        int Columns { get; }
+        int Rows { get; }
     }
 
     /// <summary>
@@ -59,15 +59,15 @@ namespace ContactGrid
         T GetNearestExcept(Vector2 position, float maxDistance, T except);
     }
 
-    public abstract class GridBase<T, TCell> : IGrid<T> where T : class where TCell : GridBase<T, TCell>.BaseSearchGridCell
+    public abstract class GridBase<T, TCell> : IGrid<T> where T : class where TCell : GridBase<T, TCell>.CellBase
     {
         public int Count { get; protected set; } // Implementations should keep track of count except on base.Clear() count is always set to zero
         public Vector2 TopLeft { get; private set; }
         public Vector2 CellSize { get; private set; }
         public float Width { get; private set; }
         public float Height { get; private set; }
-        public int HorizontalCells { get; private set; }
-        public int VerticalCells { get; private set; }
+        public int Columns { get; private set; }
+        public int Rows { get; private set; }
 
         protected TCell[,] _cells;
         protected abstract TCell _createNewCell(Vector2Int location);
@@ -101,9 +101,9 @@ namespace ContactGrid
             _diagonal = Mathf.Sqrt(width * width + height * height);
 
             // Create our cell array
-            HorizontalCells = Mathf.CeilToInt(width / cellSize.x);
-            VerticalCells = Mathf.CeilToInt(height / cellSize.y);
-            _cells = new TCell[HorizontalCells, VerticalCells];
+            Columns = Mathf.CeilToInt(width / cellSize.x);
+            Rows = Mathf.CeilToInt(height / cellSize.y);
+            _cells = new TCell[Columns, Rows];
         }
 
         protected GridBase(Vector2 center, float radius, float cellSize) : this(new Vector2(center.x - radius, center.y - radius), 2 * radius, 2 * radius, new Vector2(cellSize, cellSize))
@@ -119,7 +119,7 @@ namespace ContactGrid
         /// </summary>
         public virtual void Clear()
         {
-            _cells = new TCell[HorizontalCells, VerticalCells];
+            _cells = new TCell[Columns, Rows];
             Count = 0;
         }
 
@@ -143,9 +143,9 @@ namespace ContactGrid
         /// </summary>
         protected IEnumerable<TCell> _allOpenCells()
         {
-            for (int x = 0; x < HorizontalCells; x++)
+            for (int x = 0; x < Columns; x++)
             {
-                for (int y = 0; y < VerticalCells; y++)
+                for (int y = 0; y < Rows; y++)
                 {
                     if (_cells[x, y] != null)
                         yield return _cells[x, y];
@@ -360,7 +360,7 @@ namespace ContactGrid
         /// <summary>
         /// Blueprint for searching within a cell
         /// </summary>
-        public abstract class BaseSearchGridCell
+        public abstract class CellBase
         {
             protected abstract IEnumerable<UnitWrapper> _unitWrappers { get; }
 

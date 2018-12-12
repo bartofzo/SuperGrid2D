@@ -78,7 +78,7 @@ namespace ContactGrid
         /// <summary>
         /// Static search grid uses a list per cell
         /// </summary>
-        public class StaticCell : BaseSearchGridCell
+        public class StaticCell : CellBase
         {
             protected override IEnumerable<UnitWrapper> _unitWrappers => _wrappedUnitList;
             protected List<UnitWrapper> _wrappedUnitList = new List<UnitWrapper>();
