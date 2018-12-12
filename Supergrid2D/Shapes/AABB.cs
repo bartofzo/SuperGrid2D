@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Supergrid2D
+namespace SuperGrid2D
 {
     /// <summary>
     /// Axis aligned rectangle

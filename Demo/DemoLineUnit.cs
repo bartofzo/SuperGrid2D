@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Supergrid2D {
+namespace SuperGrid2D {
     public class DemoLineUnit : DemoUnit {
 
         Transform pointA;

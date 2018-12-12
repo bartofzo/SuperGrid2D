@@ -23,7 +23,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Supergrid2D
+namespace SuperGrid2D
 {
     /// <summary>
     /// Faster to query on but slower to remove units from. Positions can not be updated.

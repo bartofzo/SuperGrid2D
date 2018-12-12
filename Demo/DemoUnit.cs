@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Supergrid2D
+namespace SuperGrid2D
 {
     /// <summary>
     /// Everything except line

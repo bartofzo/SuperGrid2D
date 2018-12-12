@@ -23,7 +23,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Supergrid2D
+namespace SuperGrid2D
 {
     /// <summary>
     /// Implementation that allows for updating unit positions, faster removal and copying.

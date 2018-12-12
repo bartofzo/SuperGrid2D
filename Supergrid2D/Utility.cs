@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Supergrid2D
+namespace SuperGrid2D
 {
     public static class Utility 
     {
