@@ -24,9 +24,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
-    public struct Line : IConvexShape
+    public struct Line : IConvex2D
     {
         public readonly Vector2 v;
         public readonly Vector2 w;
@@ -59,7 +59,7 @@ namespace ContactGrid
             return Utility.DistanceSquared(position, projection);
         }
 
-        public bool NoContactCertainty(IConvexShape shape)
+        public bool NoContactCertainty(IConvex2D shape)
         {
             float minA = 0;
             float maxA = 0;
@@ -84,7 +84,7 @@ namespace ContactGrid
         /// Traces the line segment and returns all cell indexes that are passed
         /// 
         /// </summary>
-        public IEnumerable<Vector2Int> Supercover(IGridDimensions grid)
+        public IEnumerable<Vector2Int> Supercover(IGridDimensions2D grid)
         {
             // All flooring is done with a cast to int so this will only work
             // for positive values. Which is fine for our grid since after we normalized our coords

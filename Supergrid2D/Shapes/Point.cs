@@ -24,9 +24,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
-    public struct Point : IConvexShape
+    public struct Point : IConvex2D
     {
         public readonly float x;
         public readonly float y;
@@ -45,12 +45,12 @@ namespace ContactGrid
             return (dX * dX) + (dY * dY);
         }
 
-        public bool NoContactCertainty(IConvexShape shape)
+        public bool NoContactCertainty(IConvex2D shape)
         {
             return shape.DistanceSquared(new Vector2(x, y)) > 0;
         }
 
-        public IEnumerable<Vector2Int> Supercover(IGridDimensions grid)
+        public IEnumerable<Vector2Int> Supercover(IGridDimensions2D grid)
         {
             yield return new Vector2Int(
                 (int)(Math.Min(grid.Width, Math.Max(0, x - grid.TopLeft.x)) / grid.CellSize.x),

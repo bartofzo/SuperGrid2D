@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     public static class Utility 
     {

@@ -24,12 +24,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     /// <summary>
     /// Axis aligned rectangle
     /// </summary>
-    public struct AABB : IConvexShape
+    public struct AABB : IConvex2D
     {
         public readonly Vector2 topLeft;
         public readonly Vector2 bottomRight;
@@ -54,7 +54,7 @@ namespace ContactGrid
             return Math.Max(0, (dX * dX) + (dY * dY));
         }
 
-        public IEnumerable<Vector2Int> Supercover(IGridDimensions grid)
+        public IEnumerable<Vector2Int> Supercover(IGridDimensions2D grid)
         {
             int minX = (int)Math.Max(0, (topLeft.x - grid.TopLeft.x) / grid.CellSize.x);
             int minY = (int)Math.Max(0, (topLeft.y - grid.TopLeft.y) / grid.CellSize.y);
@@ -97,7 +97,7 @@ namespace ContactGrid
                 max = proj;
         }
 
-        public bool NoContactCertainty(IConvexShape shape)
+        public bool NoContactCertainty(IConvex2D shape)
         {
             float minA = 0;
             float maxA = 0;

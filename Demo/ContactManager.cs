@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     public class ContactManager : MonoBehaviour
     {

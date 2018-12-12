@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid {
+namespace Supergrid2D {
     public class DemoLineUnit : DemoUnit {
 
         Transform pointA;
@@ -21,7 +21,7 @@ namespace ContactGrid {
             base.Start();
         }
 
-        public override IConvexShape GetShape()
+        public override IConvex2D GetShape()
         {
             return new Line(pointA.position, pointB.position);
         }

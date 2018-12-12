@@ -1,17 +1,17 @@
-# ContactGrid
+# Supergrid2D
 
 A C# 2D Spatial Indexing library that utilizes a fixed grid to optimize spatial queries.
 Written with Unity in mind (uses Vector2 and some Mathf functions). But is easily ported to support other environments as well.
 
 ## Usage
 
-ContactGrid can be used to find out which objects making 'contact' with a certain shape. This is useful for determining if shapes intersect, or if for example objects are on screen.
+Supergrid can be used to find out which objects making 'contact' with a certain shape. This is useful for determining if shapes intersect, or if for example objects are on screen.
 The grid can also be used to quickly find the closest object to a given point. Although when the grid is very large and there are very little objects placed in the grid, this can be costly.
 
-Copy the ContactGrid folder into your project.
+Copy the Supergrid2D folder into your project.
 
 ```
-var grid = new StaticGrid<SomeObjectType>(topLeft, width, height, cellSize);
+var grid = new StaticGrid2D<SomeObjectType>(topLeft, width, height, cellSize);
 
 grid.Add(someObject, new Point(x, y));
 grid.Add(someObject, new Circle(x, y, r));
@@ -36,7 +36,7 @@ foreach (var someObject in grid.Contact(new Point(x, y))
 // Get the unit that is closest to a point
 var nearestToPoint = grid.Nearest(new Vector2(x, y));
 
-var dynamicGrid = new DynamicGrid<SomeKeyType, SomeObjectType>(topLeft, width, height, cellSize);
+var dynamicGrid = new DynamicGrid2D<SomeKeyType, SomeObjectType>(topLeft, width, height, cellSize);
 
 dynamicGrid.Add(someKey, someObject, new AABB(topLeft, bottomRight));
 dynamicGrid.Add(someKey, someObject, new Line(x1, y1, x2, y2));
@@ -76,25 +76,25 @@ Idealized situation:
 ### Contact:
 
 - List: 41844ms
-- ContactGrid: 108ms (387x faster)
+- Supergrid: 108ms (387x faster)
 
 ### Nearest:
 
-- SearchGrid: 236ms (177x faster)
+- Supergrid: 236ms (177x faster)
 - List: 45821ms
 
 
 ## Components
 
-### StaticGrid
+### StaticGrid2D
 Fastest performance but object positions/shapes are fixed once they are added.
 Removal is slow.
 
-### DynamicGrid
+### DynamicGrid2D
 Uses an internal dictionary to keep track of units. This allows for updating of positions and fast removal.
 
-### IConvexShape
-You can define your custom shapes to look for in the grid if they implement IConvexShape.
+### IConvex2D
+You can define your custom shapes to look for in the grid if they implement IConvex2D
 
 ## Future plans
 
@@ -106,6 +106,8 @@ You can define your custom shapes to look for in the grid if they implement ICon
 - Adjust some names/descriptions.
 
 - There might still be some room for optimization.
+
+- A 3D version is theoretically possible. Although such a grid could have a very high memory usage. I might implement it in the future.
 
 Right now this is all I need for my own project(s).
 

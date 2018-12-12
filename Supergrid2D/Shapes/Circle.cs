@@ -24,9 +24,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
-    public struct Circle : IConvexShape
+    public struct Circle : IConvex2D
     {
         public readonly Vector2 center;
         public readonly float radius;
@@ -54,7 +54,7 @@ namespace ContactGrid
         /// No SAT here
         /// A shape doesn't touch a circle when it's closest distance to the circle's center is greater than the circle's radius
         /// </summary>
-        public bool NoContactCertainty(IConvexShape shape)
+        public bool NoContactCertainty(IConvex2D shape)
         {
             return shape.DistanceSquared(center) > radius * radius;
         }
@@ -62,7 +62,7 @@ namespace ContactGrid
         /// <summary>
         /// The supercover of a circle is it's bounding box
         /// </summary>
-        public IEnumerable<Vector2Int> Supercover(IGridDimensions grid)
+        public IEnumerable<Vector2Int> Supercover(IGridDimensions2D grid)
         {
             Vector2 offsetPosition = center - grid.TopLeft;
 

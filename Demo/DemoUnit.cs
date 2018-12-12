@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     /// <summary>
     /// Everything except line
@@ -53,7 +53,7 @@ namespace ContactGrid
             Color = new Color(0, 0, 0, 0.5f);
         }
 
-        public virtual IConvexShape GetShape()
+        public virtual IConvex2D GetShape()
         {
             switch (ShapeType)
             {

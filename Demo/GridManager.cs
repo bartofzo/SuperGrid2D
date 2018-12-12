@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     public class GridManager : MonoBehaviour
     {
-        public IGrid<DemoUnit> GridInterface => _grid;
+        public IGrid2D<DemoUnit> GridInterface => _grid;
 
-        private DynamicGrid<int, DemoUnit> _grid;
+        private DynamicGrid2D<int, DemoUnit> _grid;
 
         private int _keyCounter = 0;
         public int NewKey => _keyCounter++;
 
         private void Awake()
         {
-            _grid = new DynamicGrid<int, DemoUnit>(Vector2.zero, 100, 10);
+            _grid = new DynamicGrid2D<int, DemoUnit>(Vector2.zero, 100, 10);
         }
 
         public void Add(DemoUnit unit)
@@ -23,7 +23,7 @@ namespace ContactGrid
             _grid.Add(unit.Key, unit, unit.GetShape());
         }
 
-        public void UpdateShape(int key, IConvexShape shape)
+        public void UpdateShape(int key, IConvex2D shape)
         {
             _grid.Update(key, shape);
         }

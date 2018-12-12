@@ -23,7 +23,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     /// <summary>
     /// Defines a shape for ContactGrid 
@@ -33,7 +33,7 @@ namespace ContactGrid
     /// - shapes must be convex
     /// 
     /// </summary>
-    public interface IConvexShape
+    public interface IConvex2D
     {
         /// <summary>
         /// Should return the shortest distance^2 from a position to the edge of this shape
@@ -44,7 +44,7 @@ namespace ContactGrid
         /// <summary>
         /// Should enumerate all cell indices that this shape overlaps with
         /// </summary>
-        IEnumerable<Vector2Int> Supercover(IGridDimensions grid);
+        IEnumerable<Vector2Int> Supercover(IGridDimensions2D grid);
 
         /// <summary>
         /// Should return if another shape is certain to not make contact with this shape using SAT (Separating Axis Theorem)
@@ -57,7 +57,7 @@ namespace ContactGrid
         /// shapes has the least expensive function. Then that function can be evaluated first.
         /// 
         /// </summary>
-        bool NoContactCertainty(IConvexShape shape);
+        bool NoContactCertainty(IConvex2D shape);
 
         /// <summary>
         /// Should return this shape's projection on an axis

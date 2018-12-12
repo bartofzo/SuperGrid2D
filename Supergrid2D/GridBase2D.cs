@@ -24,12 +24,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     /// <summary>
     /// Interface that shapes use to determine their supercover
     /// </summary>
-    public interface IGridDimensions
+    public interface IGridDimensions2D
     {
         Vector2 TopLeft { get; }
         float Width { get; }
@@ -42,14 +42,15 @@ namespace ContactGrid
     /// <summary>
     /// Interface for performing queries on a general grid
     /// </summary>
-    public interface IGrid<T> : IGridDimensions
+    public interface IGrid2D<T> : IGridDimensions2D
     {
         int Count { get; }
 
-        T FirstContact(IConvexShape shape);
-        IEnumerable<T> Contact(IConvexShape shape);
-        IEnumerable<T> ContactWhich(IConvexShape shape, Predicate<T> predicate);
-        IEnumerable<T> ContactExcept(IConvexShape shape, T except);
+        T FirstContact(IConvex2D shape);
+        T FirstContactWhich(IConvex2D shape, Predicate<T> predicate);
+        IEnumerable<T> Contact(IConvex2D shape);
+        IEnumerable<T> ContactWhich(IConvex2D shape, Predicate<T> predicate);
+        IEnumerable<T> ContactExcept(IConvex2D shape, T except);
 
         T GetNearest(Vector2 position);
         T GetNearest(Vector2 position, float maxDistance);
@@ -59,7 +60,7 @@ namespace ContactGrid
         T GetNearestExcept(Vector2 position, float maxDistance, T except);
     }
 
-    public abstract class GridBase<T, TCell> : IGrid<T> where T : class where TCell : GridBase<T, TCell>.CellBase
+    public abstract class GridBase2D<T, TCell> : IGrid2D<T> where T : class where TCell : GridBase2D<T, TCell>.CellBase
     {
         public int Count { get; protected set; } // Implementations should keep track of count except on base.Clear() count is always set to zero
         public Vector2 TopLeft { get; private set; }
@@ -79,7 +80,7 @@ namespace ContactGrid
         /// Constructs a Grid
         /// An optimal cellSize would be around double the average query radius
         /// </summary>
-        protected GridBase(Vector2 topLeft, float width, float height, Vector2 cellSize)
+        protected GridBase2D(Vector2 topLeft, float width, float height, Vector2 cellSize)
         {
             if (width <= 0 || height <= 0)
                 throw new Exception("Width and height must be greater than zero");
@@ -106,11 +107,11 @@ namespace ContactGrid
             _cells = new TCell[Columns, Rows];
         }
 
-        protected GridBase(Vector2 center, float radius, float cellSize) : this(new Vector2(center.x - radius, center.y - radius), 2 * radius, 2 * radius, new Vector2(cellSize, cellSize))
+        protected GridBase2D(Vector2 center, float radius, float cellSize) : this(new Vector2(center.x - radius, center.y - radius), 2 * radius, 2 * radius, new Vector2(cellSize, cellSize))
         {
         }
 
-        protected GridBase(Vector2 topLeft, float width, float height, float cellSize) : this(topLeft, width, height, new Vector2(cellSize, cellSize))
+        protected GridBase2D(Vector2 topLeft, float width, float height, float cellSize) : this(topLeft, width, height, new Vector2(cellSize, cellSize))
         {
         }
 
@@ -126,7 +127,7 @@ namespace ContactGrid
         /// <summary>
         /// Enumerates all cells that are in the supercover of shape and creates a new cell if that cell was null
         /// </summary>
-        protected IEnumerable<TCell> _getOrCreateSupercover(IConvexShape shape)
+        protected IEnumerable<TCell> _getOrCreateSupercover(IConvex2D shape)
         {
             foreach (var location in shape.Supercover(this))
             {
@@ -154,7 +155,7 @@ namespace ContactGrid
         }
 
         /// <summary>
-        /// Finds nearest neighbour within maxDistance
+        /// Finds nearest neighbour within maxDistance for which a predicate evaluates to true
         /// </summary>
         protected T _nearest(Vector2 position, float maxDistance, Predicate<T> predicate, out float distSquared)
         {
@@ -202,7 +203,7 @@ namespace ContactGrid
         }
 
         /// <summary>
-        /// Returns the nearest unit that is found from position. Without limit.
+        /// Returns the nearest unit that is found from position. 
         /// Beware that this method is potentially costly when the nearest unit is very far outside of the cell size.
         /// Use the overload with maxDistance instead for faster operation. Position must be within bounds.
         /// </summary>
@@ -213,7 +214,7 @@ namespace ContactGrid
         }
 
         /// <summary>
-        /// Returns the nearest unit that is found from position within a given limit search radius.
+        /// Returns the nearest unit that is found from position within a given maximum distance
         /// </summary>
         public T GetNearest(Vector2 position, float maxDistance)
         {
@@ -231,7 +232,7 @@ namespace ContactGrid
         }
 
         /// <summary>
-        /// Returns the nearest unit that conforms to a predicate.
+        /// Returns the nearest unit for which a predicate evaluates to true
         /// </summary>
         public T GetNearestWhich(Vector2 position, float maxDistance, Predicate<T> predicate)
         {
@@ -260,7 +261,7 @@ namespace ContactGrid
         /// <summary>
         /// Returns the first object found that contacts shape. It might speak an alien language to us humans.
         /// </summary>
-        public T FirstContact(IConvexShape shape)
+        public T FirstContact(IConvex2D shape)
         {
             _queryNumber++;
 
@@ -277,9 +278,28 @@ namespace ContactGrid
         }
 
         /// <summary>
+        /// Returns the first object found that contacts shape for which a predicate evaluates to true. It might speak an alien language to us humans.
+        /// </summary>
+        public T FirstContactWhich(IConvex2D shape, Predicate<T> predicate)
+        {
+            _queryNumber++;
+
+            foreach (Vector2Int cellIndex in shape.Supercover(this))
+            {
+                if (_cells[cellIndex.x, cellIndex.y] != null)
+                {
+                    foreach (var unit in _cells[cellIndex.x, cellIndex.y].Contact(shape, predicate, _queryNumber))
+                        return unit;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Enumarates all objects that overlap with shape
         /// </summary>
-        public IEnumerable<T> Contact(IConvexShape shape)
+        public IEnumerable<T> Contact(IConvex2D shape)
         {
             // Increment our query number to prevent yielding a unit multiple times if it spans more than one cell
             _queryNumber++;
@@ -295,9 +315,9 @@ namespace ContactGrid
         }
 
         /// <summary>
-        /// Enumarates all objects that overlap with shape and that conform to a predicate
+        /// Enumarates all objects that overlap with a convex shape and for which a predicate evaluates to true
         /// </summary>
-        public IEnumerable<T> ContactWhich(IConvexShape shape, Predicate<T> predicate)
+        public IEnumerable<T> ContactWhich(IConvex2D shape, Predicate<T> predicate)
         {
             // Increment our query number to prevent yielding a unit multiple times if it spans more than one cell
             _queryNumber++;
@@ -315,7 +335,7 @@ namespace ContactGrid
         /// <summary>
         /// Enumarates all objects that overlap with shape
         /// </summary>
-        public IEnumerable<T> ContactExcept(IConvexShape shape, T except)
+        public IEnumerable<T> ContactExcept(IConvex2D shape, T except)
         {
             // Increment our query number to prevent yielding a unit multiple times if it spans more than one cell
             _queryNumber++;
@@ -336,11 +356,11 @@ namespace ContactGrid
         public class UnitWrapper
         {
             public readonly T Unit;
-            public readonly IConvexShape Shape;
+            public readonly IConvex2D Shape;
 
             private int _lastQueryNumber; // Keeps track of the last query number that has been made to prevent duplicate results
 
-            public UnitWrapper(T unit, IConvexShape shape)
+            public UnitWrapper(T unit, IConvex2D shape)
             {
                 Shape = shape;
                 Unit = unit;
@@ -391,7 +411,7 @@ namespace ContactGrid
             /// <summary>
             /// Returns all units in this cell that contact shape
             /// </summary>
-            public IEnumerable<T> Contact(IConvexShape shape, Predicate<T> predicate, int queryNumber)
+            public IEnumerable<T> Contact(IConvex2D shape, Predicate<T> predicate, int queryNumber)
             {
                 foreach (var wrapper in _unitWrappers)
                 {

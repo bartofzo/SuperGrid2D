@@ -23,40 +23,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     /// <summary>
     /// Implementation that allows for updating unit positions, faster removal and copying.
     /// Downside is that is a little bit slower to query.
     /// </summary>
-    public class DynamicGrid<TKey, T> : GridBase<T,  DynamicGrid<TKey, T>.DynamicCell> where T : class
+    public class DynamicGrid2D<TKey, T> : GridBase2D<T,  DynamicGrid2D<TKey, T>.DynamicCell2D> where T : class
     {
         /// <summary>
         /// Dictionary for easy access to updating / removing units
         /// </summary>
         private Dictionary<TKey, UnitWrapper> wrappers = new Dictionary<TKey, UnitWrapper>();
 
-        public DynamicGrid(Vector2 topLeft, float width, float height, Vector2 cellSize) : base(topLeft, width, height, cellSize)
+        public DynamicGrid2D(Vector2 topLeft, float width, float height, Vector2 cellSize) : base(topLeft, width, height, cellSize)
         {
         }
 
-        public DynamicGrid(Vector2 topLeft, float width, float height, float cellSize) : base(topLeft, width, height, cellSize)
+        public DynamicGrid2D(Vector2 topLeft, float width, float height, float cellSize) : base(topLeft, width, height, cellSize)
         {
         }
 
-        public DynamicGrid(Vector2 center, float radius, float cellSize) : base(center, radius, cellSize)
+        public DynamicGrid2D(Vector2 center, float radius, float cellSize) : base(center, radius, cellSize)
         {
         }
 
-        protected override DynamicCell _createNewCell(Vector2Int location)
+        protected override DynamicCell2D _createNewCell(Vector2Int location)
         {
-            return new DynamicCell();
+            return new DynamicCell2D();
         }
 
         /// <summary>
         /// Adds a unit.
         /// </summary>
-        public void Add(TKey key, T unit, IConvexShape shape)
+        public void Add(TKey key, T unit, IConvex2D shape)
         {
             UnitWrapper wrapper = new UnitWrapper(unit, shape);
 
@@ -91,7 +91,7 @@ namespace ContactGrid
         /// <summary>
         /// Updates a unit's position / shape
         /// </summary>
-        public void Update(TKey key, IConvexShape newShape)
+        public void Update(TKey key, IConvex2D newShape)
         {
             UnitWrapper wrapper = wrappers[key];
 
@@ -137,7 +137,7 @@ namespace ContactGrid
         /// <summary>
         /// Uses a dictionary
         /// </summary>
-        public class DynamicCell : CellBase
+        public class DynamicCell2D : CellBase
         {
             protected override IEnumerable<UnitWrapper> _unitWrappers => _unitDictionary.Values;
             private Dictionary<TKey, UnitWrapper> _unitDictionary = new Dictionary<TKey, UnitWrapper>();

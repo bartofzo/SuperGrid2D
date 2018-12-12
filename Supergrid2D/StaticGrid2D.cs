@@ -23,22 +23,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ContactGrid
+namespace Supergrid2D
 {
     /// <summary>
     /// Faster to query on but slower to remove units from. Positions can not be updated.
     /// </summary>
-    public class StaticGrid<T> : GridBase<T, StaticGrid<T>.StaticCell> where T : class
+    public class StaticGrid2D<T> : GridBase2D<T, StaticGrid2D<T>.StaticCell> where T : class
     {
-        public StaticGrid(Vector2 topLeft, float width, float height, float cellSize) : base(topLeft, width, height, cellSize)
+        public StaticGrid2D(Vector2 topLeft, float width, float height, float cellSize) : base(topLeft, width, height, cellSize)
         {
         }
 
-        public StaticGrid(Vector2 topLeft, float width, float height, Vector2 cellSize) : base(topLeft, width, height, cellSize)
+        public StaticGrid2D(Vector2 topLeft, float width, float height, Vector2 cellSize) : base(topLeft, width, height, cellSize)
         {
         }
 
-        public StaticGrid(Vector2 center, float radius, float cellSize) : base(center, radius, cellSize)
+        public StaticGrid2D(Vector2 center, float radius, float cellSize) : base(center, radius, cellSize)
         {
         }
 
@@ -53,7 +53,7 @@ namespace ContactGrid
         /// <summary>
         /// Adds a unit.
         /// </summary>
-        public void Add(T unit, IConvexShape shape)
+        public void Add(T unit, IConvex2D shape)
         {
             foreach (var cell in _getOrCreateSupercover(shape))
                 cell.Add(new UnitWrapper(unit, shape));
