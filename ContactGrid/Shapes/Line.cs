@@ -49,9 +49,6 @@ namespace ContactGrid
         /// </summary>
         public float DistanceSquared(Vector2 position)
         {
-            // Return minimum distance between line segment vw and point p in Z
-            // and the projection is stored in X & Y
-
             float lengthSquared = Utility.DistanceSquared(v, w);
             if (lengthSquared < float.Epsilon) 
                 return Utility.DistanceSquared(v, position); // when we're actually a dot
@@ -89,6 +86,10 @@ namespace ContactGrid
         /// </summary>
         public IEnumerable<Vector2Int> Supercover(IGridDimensions grid)
         {
+            // All flooring is done with a cast to int so this will only work
+            // for positive values. Which is fine for our grid since after we normalized our coords
+            // to the grid there are no negative values (except when we're out of bounds, but that's not allowed)
+
             // Set to offset of grid and make each integer correspond to a cell
             Vector2 normalizedV = (v - grid.TopLeft) / grid.CellSize;
             Vector2 normalizedW = (w - grid.TopLeft) / grid.CellSize;
@@ -113,13 +114,13 @@ namespace ContactGrid
             else if (w.x > v.x)
             {
                 xDirection = 1;
-                totalSteps += Mathf.FloorToInt(normalizedW.x) - x;
+                totalSteps += (int)normalizedW.x - x;
                 error = (Mathf.Floor(normalizedV.x) + 1 - normalizedV.x) * lineDeltaY;
             }
             else
             {
                 xDirection = -1;
-                totalSteps += x - Mathf.FloorToInt(normalizedW.x);
+                totalSteps += x - (int)normalizedW.x;
                 error = (normalizedV.x - Mathf.Floor(normalizedV.x)) * lineDeltaY;
             }
 
@@ -131,13 +132,13 @@ namespace ContactGrid
             else if (w.y > v.y)
             {
                 yDirection = 1;
-                totalSteps += Mathf.FloorToInt(normalizedW.y) - y;
+                totalSteps += (int)normalizedW.y - y;
                 error -= (Mathf.Floor(normalizedV.y) + 1 - normalizedV.y) * lineDeltaX;
             }
             else
             {
                 yDirection = -1;
-                totalSteps += y - Mathf.FloorToInt(normalizedW.y);
+                totalSteps += y - (int)normalizedW.y;
                 error -= (normalizedV.y - Mathf.Floor(normalizedV.y)) * lineDeltaX;
             }
 
