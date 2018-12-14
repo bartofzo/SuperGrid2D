@@ -31,7 +31,6 @@ namespace SuperGrid2D
         public readonly Vector2 v;
         public readonly Vector2 w;
 
-
         public Line(Vector2 v, Vector2 w)
         {
             this.v = v;

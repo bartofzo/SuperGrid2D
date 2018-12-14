@@ -21,7 +21,7 @@ namespace SuperGrid2D
                 c.UnmarkAsContacted();
 
             prevContact.Clear();
-            foreach (var u in gridManager.GridInterface.ContactExcept(unit.GetShape(), unit))
+            foreach (var u in gridManager.GridInterface.ContactWhich(unit.GetShape(), (u) => u != unit))
             {
                 prevContact.Add(u);
                 u.MarkAsContacted();

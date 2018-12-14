@@ -48,19 +48,17 @@ namespace SuperGrid2D
 
         T FirstContact(IConvex2D shape);
         T FirstContactWhich(IConvex2D shape, Predicate<T> predicate);
+
         IEnumerable<T> Contact(IConvex2D shape);
         IEnumerable<T> ContactWhich(IConvex2D shape, Predicate<T> predicate);
-        IEnumerable<T> ContactExcept(IConvex2D shape, T except);
 
         T GetNearest(Vector2 position);
         T GetNearest(Vector2 position, float maxDistance);
         T GetNearestWhich(Vector2 position, Predicate<T> predicate);
         T GetNearestWhich(Vector2 position, float maxDistance, Predicate<T> predicate);
-        T GetNearestExcept(Vector2 position, T except);
-        T GetNearestExcept(Vector2 position, float maxDistance, T except);
     }
 
-    public abstract class GridBase2D<T, TCell> : IGrid2D<T> where T : class where TCell : GridBase2D<T, TCell>.CellBase
+    public abstract class GridBase2D<T, TCell> : IGrid2D<T> where TCell : GridBase2D<T, TCell>.CellBase
     {
         public int Count { get; protected set; } // Implementations should keep track of count except on base.Clear() count is always set to zero
         public Vector2 TopLeft { get; private set; }
@@ -159,7 +157,7 @@ namespace SuperGrid2D
         /// </summary>
         protected T _nearest(Vector2 position, float maxDistance, Predicate<T> predicate, out float distSquared)
         {
-            T nearestUnit = null;
+            UnitWrapper nearestWrapper = null;
             float nearestDist = float.PositiveInfinity;
             float radius = Mathf.Min(CellSize.x, CellSize.y); // Intial search radius
 
@@ -172,12 +170,12 @@ namespace SuperGrid2D
                 if (nearestDistInCell < nearestDist)
                 {
                     nearestDist = nearestDistInCell;
-                    nearestUnit = nearestInCell;
+                    nearestWrapper = nearestInCell;
                 }
             };
 
             // Keep searching and doubling our radius until we've found a unit or when we've searched beyond the limit
-            while (nearestUnit == null && radius <= maxDistance)
+            while (nearestWrapper == null && radius <= maxDistance)
             {
                 foreach (Vector2Int cellIndex in new Circle(position, radius).Supercover(this))
                 {
@@ -189,7 +187,7 @@ namespace SuperGrid2D
             }
 
             // In case our radius expanded beyond the limit we need to search one more time exactly at limit
-            if (radius > maxDistance && nearestUnit == null)
+            if (radius > maxDistance && nearestWrapper == null)
             {
                 radius = maxDistance;
 
@@ -199,7 +197,7 @@ namespace SuperGrid2D
             }
 
             distSquared = nearestDist;
-            return nearestUnit;
+            return nearestWrapper.Unit;
         }
 
         /// <summary>
@@ -241,24 +239,6 @@ namespace SuperGrid2D
         }
 
         /// <summary>
-        /// Returns the nearest unit that is not unit
-        /// </summary>
-        public T GetNearestExcept(Vector2 position, T except)
-        {
-            float d;
-            return _nearest(position, _diagonal, (unit) => unit != except, out d);
-        }
-
-        /// <summary>
-        /// Returns the nearest unit that is not unit
-        /// </summary>
-        public T GetNearestExcept(Vector2 position, float maxDistance, T except)
-        {
-            float d;
-            return _nearest(position, maxDistance, (unit) => unit != except, out d);
-        }
-
-        /// <summary>
         /// Returns the first object found that contacts shape. It might speak an alien language to us humans.
         /// </summary>
         public T FirstContact(IConvex2D shape)
@@ -269,12 +249,12 @@ namespace SuperGrid2D
             {
                 if (_cells[cellIndex.x, cellIndex.y] != null)
                 {
-                    foreach (var unit in _cells[cellIndex.x, cellIndex.y].Contact(shape, (u) => true, _queryNumber))
-                        return unit;
+                    foreach (var wrapper in _cells[cellIndex.x, cellIndex.y].Contact(shape, (u) => true, _queryNumber))
+                        return wrapper.Unit;
                 }
             }
 
-            return null;
+            return default(T);
         }
 
         /// <summary>
@@ -288,12 +268,12 @@ namespace SuperGrid2D
             {
                 if (_cells[cellIndex.x, cellIndex.y] != null)
                 {
-                    foreach (var unit in _cells[cellIndex.x, cellIndex.y].Contact(shape, predicate, _queryNumber))
-                        return unit;
+                    foreach (var wrapper in _cells[cellIndex.x, cellIndex.y].Contact(shape, predicate, _queryNumber))
+                        return wrapper.Unit;
                 }
             }
 
-            return null;
+            return default(T);
         }
 
         /// <summary>
@@ -308,8 +288,8 @@ namespace SuperGrid2D
             {
                 if (_cells[cellIndex.x, cellIndex.y] != null)
                 {
-                    foreach (var unit in _cells[cellIndex.x, cellIndex.y].Contact(shape, (u) => true, _queryNumber))
-                        yield return unit;
+                    foreach (var wrapper in _cells[cellIndex.x, cellIndex.y].Contact(shape, (u) => true, _queryNumber))
+                        yield return wrapper.Unit;
                 }
             }
         }
@@ -326,29 +306,12 @@ namespace SuperGrid2D
             {
                 if (_cells[cellIndex.x, cellIndex.y] != null)
                 {
-                    foreach (var unit in _cells[cellIndex.x, cellIndex.y].Contact(shape, predicate, _queryNumber))
-                        yield return unit;
+                    foreach (var wrapper in _cells[cellIndex.x, cellIndex.y].Contact(shape, predicate, _queryNumber))
+                        yield return wrapper.Unit;
                 }
             }
         }
 
-        /// <summary>
-        /// Enumarates all objects that overlap with shape
-        /// </summary>
-        public IEnumerable<T> ContactExcept(IConvex2D shape, T except)
-        {
-            // Increment our query number to prevent yielding a unit multiple times if it spans more than one cell
-            _queryNumber++;
-
-            foreach (Vector2Int cellIndex in shape.Supercover(this))
-            {
-                if (_cells[cellIndex.x, cellIndex.y] != null)
-                {
-                    foreach (var unit in _cells[cellIndex.x, cellIndex.y].Contact(shape, (unit) => unit != except, _queryNumber))
-                        yield return unit;
-                }
-            }
-        }
 
         /// <summary>
         /// Base wrapper for units that are inside a cell
@@ -385,12 +348,12 @@ namespace SuperGrid2D
             protected abstract IEnumerable<UnitWrapper> _unitWrappers { get; }
 
             /// <summary>
-            /// Returns the nearest unit to position that is within limit and conforms to predicate
+            /// Returns the nearest unit wrapper to position that is within limit and conforms to predicate
             /// </summary>
-            public T Nearest(Vector2 position, float limit, Predicate<T> predicate, out float nearestDistSquared)
+            public UnitWrapper Nearest(Vector2 position, float limit, Predicate<T> predicate, out float nearestDistSquared)
             {
                 float limitSquared = limit * limit;
-                T nearestUnit = null;
+                UnitWrapper nearestWrapper = null;
 
                 nearestDistSquared = float.PositiveInfinity;
 
@@ -401,17 +364,17 @@ namespace SuperGrid2D
                     if (d < nearestDistSquared && d < limitSquared && predicate(wrapper.Unit))
                     {
                         nearestDistSquared = d;
-                        nearestUnit = wrapper.Unit;
+                        nearestWrapper = wrapper;
                     }
                 }
 
-                return nearestUnit;
+                return nearestWrapper;
             }
 
             /// <summary>
             /// Returns all units in this cell that contact shape
             /// </summary>
-            public IEnumerable<T> Contact(IConvex2D shape, Predicate<T> predicate, int queryNumber)
+            public IEnumerable<UnitWrapper> Contact(IConvex2D shape, Predicate<T> predicate, int queryNumber)
             {
                 foreach (var wrapper in _unitWrappers)
                 {
@@ -419,10 +382,10 @@ namespace SuperGrid2D
                     if (!wrapper.Once(queryNumber))
                         continue;
 
-                    if (!shape.NoContactCertainty(wrapper.Shape) && 
+                    if (!shape.NoContactCertainty(wrapper.Shape) &&
                         !wrapper.Shape.NoContactCertainty(shape) &&
                         predicate(wrapper.Unit))
-                        yield return wrapper.Unit;
+                        yield return wrapper;
                 }
             }
         }

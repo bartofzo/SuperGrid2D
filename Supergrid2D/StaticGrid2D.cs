@@ -25,10 +25,7 @@ using UnityEngine;
 
 namespace SuperGrid2D
 {
-    /// <summary>
-    /// Faster to query on but slower to remove units from. Positions can not be updated.
-    /// </summary>
-    public class StaticGrid2D<T> : GridBase2D<T, StaticGrid2D<T>.StaticCell> where T : class
+    public class StaticGrid2D<T> : GridBase2D<T, StaticGrid2D<T>.StaticCell>
     {
         public StaticGrid2D(Vector2 topLeft, float width, float height, float cellSize) : base(topLeft, width, height, cellSize)
         {
@@ -62,20 +59,6 @@ namespace SuperGrid2D
         }
 
         /// <summary>
-        /// Removes a unit (slow)
-        /// </summary>
-        public bool Remove(T unit)
-        {
-            bool removed = false;
-            foreach (var cell in _allOpenCells())
-                removed |= cell.RemoveAll(unit);
-
-            Count -= removed ? 1 : 0;
-
-            return removed;
-        }
-
-        /// <summary>
         /// Static search grid uses a list per cell
         /// </summary>
         public class StaticCell : CellBase
@@ -86,21 +69,6 @@ namespace SuperGrid2D
             public virtual void Add(UnitWrapper wrapper)
             {
                 _wrappedUnitList.Add(wrapper);
-            }
-
-            public virtual bool RemoveAll(T unit)
-            {
-                bool removed = false;
-                for (int i = _wrappedUnitList.Count - 1; i >= 0; i--)
-                {
-                    if (_wrappedUnitList[i].Unit == unit)
-                    {
-                        _wrappedUnitList.RemoveAt(i);
-                        removed = true;
-                    }
-                }
-
-                return removed;
             }
         }
     }

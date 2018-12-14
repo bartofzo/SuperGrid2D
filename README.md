@@ -29,7 +29,7 @@ foreach (var someObject in grid.Contact(new Line(x1, y1, x2, y2))
 foreach (var someObject in grid.Contact(new AABB(screenWorldTopLeft, screenWorldBottomRight))
     ...do something
 
-// Get all units that a touch a point (this excludes other points or lines since they can't intersect a point)
+// Get all units that a touch a point
 foreach (var someObject in grid.Contact(new Point(x, y))
     ...do something
 
@@ -87,8 +87,7 @@ Idealized situation:
 ## Components
 
 ### StaticGrid2D
-Fastest performance but object positions/shapes are fixed once they are added.
-Removal is slow.
+Best performance but you can only add units.
 
 ### DynamicGrid2D
 Uses an internal dictionary to keep track of units. This allows for updating of positions and fast removal.

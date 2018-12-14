@@ -29,7 +29,7 @@ namespace SuperGrid2D
     /// Implementation that allows for updating unit positions, faster removal and copying.
     /// Downside is that is a little bit slower to query.
     /// </summary>
-    public class DynamicGrid2D<TKey, T> : GridBase2D<T,  DynamicGrid2D<TKey, T>.DynamicCell2D> where T : class
+    public class DynamicGrid2D<TKey, T> : GridBase2D<T,  DynamicGrid2D<TKey, T>.DynamicCell2D> 
     {
         /// <summary>
         /// Dictionary for easy access to updating / removing units
