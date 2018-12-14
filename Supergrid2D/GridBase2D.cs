@@ -197,7 +197,7 @@ namespace SuperGrid2D
             }
 
             distSquared = nearestDist;
-            return nearestWrapper.Unit;
+            return nearestWrapper == null ? default(T) : nearestWrapper.Unit;
         }
 
         /// <summary>
