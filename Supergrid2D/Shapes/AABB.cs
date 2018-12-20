@@ -59,8 +59,8 @@ namespace SuperGrid2D
             int minX = (int)Math.Max(0, (topLeft.x - grid.TopLeft.x) / grid.CellSize.x);
             int minY = (int)Math.Max(0, (topLeft.y - grid.TopLeft.y) / grid.CellSize.y);
 
-            int maxX = (int)Math.Min(grid.Width, (bottomRight.x - grid.TopLeft.x) / grid.CellSize.x);
-            int maxY = (int)Math.Min(grid.Height, (bottomRight.y - grid.TopLeft.y) / grid.CellSize.y);
+            int maxX = (int)Math.Min(grid.Columns - 1, (bottomRight.x - grid.TopLeft.x) / grid.CellSize.x);
+            int maxY = (int)Math.Min(grid.Rows - 1, (bottomRight.y - grid.TopLeft.y) / grid.CellSize.y);
 
             for (int x = minX; x <= maxX; x++)
             {

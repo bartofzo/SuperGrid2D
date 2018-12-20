@@ -15,7 +15,7 @@ namespace SuperGrid2D
 
         private void Awake()
         {
-            _grid = new DynamicGrid2D<int, DemoUnit>(Vector2.zero, 100, 10);
+            _grid = new DynamicGrid2D<int, DemoUnit>(Vector2.zero, 5, 1);
         }
 
         public void Add(DemoUnit unit)

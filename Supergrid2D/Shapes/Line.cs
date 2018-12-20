@@ -143,7 +143,12 @@ namespace SuperGrid2D
 
             for (; totalSteps > 0; --totalSteps)
             {
-                yield return new Vector2Int(x, y);
+                // Only return values that are inside the grid
+                // we can't clamp the line before hand because that could alter the direction of the line
+                if (x >= 0 && x < grid.Columns &&
+                    y >= 0 && y < grid.Rows)
+                    yield return new Vector2Int(x, y);
+
                 if (error > 0)
                 {
                     y += yDirection;

@@ -66,11 +66,11 @@ namespace SuperGrid2D
         {
             Vector2 offsetPosition = center - grid.TopLeft;
 
-            int minX = (int) (Math.Max(0, offsetPosition.x - radius) / grid.CellSize.x);
-            int minY = (int) (Math.Max(0, offsetPosition.y - radius) / grid.CellSize.y);
+            int minX = (int) Math.Max(0, (offsetPosition.x - radius) / grid.CellSize.x);
+            int minY = (int) Math.Max(0, (offsetPosition.y - radius) / grid.CellSize.y);
 
-            int maxX = (int) (Math.Min(grid.Width, offsetPosition.x + radius) / grid.CellSize.x);
-            int maxY = (int) (Math.Min(grid.Height, offsetPosition.y + radius) / grid.CellSize.y);
+            int maxX = (int) Math.Min(grid.Columns - 1, (offsetPosition.x + radius) / grid.CellSize.x);
+            int maxY = (int) Math.Min(grid.Rows - 1, (offsetPosition.y + radius) / grid.CellSize.y);
 
             for (int x = minX; x <= maxX; x++)
             {

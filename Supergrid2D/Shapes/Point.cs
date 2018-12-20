@@ -53,8 +53,8 @@ namespace SuperGrid2D
         public IEnumerable<Vector2Int> Supercover(IGridDimensions2D grid)
         {
             yield return new Vector2Int(
-                (int)(Math.Min(grid.Width, Math.Max(0, x - grid.TopLeft.x)) / grid.CellSize.x),
-                (int)(Math.Min(grid.Height, Math.Max(0, y - grid.TopLeft.y)) / grid.CellSize.y));
+                (int)(Math.Min(grid.Columns - 1, Math.Max(0, (x - grid.TopLeft.x) / grid.CellSize.x))),
+                (int)(Math.Min(grid.Rows - 1, Math.Max(0, (y - grid.TopLeft.y) / grid.CellSize.y))));
         }
 
         public void Project(Vector2 normal, ref float min, ref float max)
