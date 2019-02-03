@@ -90,11 +90,11 @@ namespace SuperGrid2D
             else if (proj > max)
                 max = proj;
                 
-            proj = Utility.Dot(normal, topLeft.x, bottomRight.y);
-            if (proj < min)
-                min = proj;
-            else if (proj > max)
-                max = proj;
+            //proj = Utility.Dot(normal, topLeft.x, bottomRight.y);
+            //if (proj < min)
+            //    min = proj;
+            //else if (proj > max)
+                //max = proj;
         }
 
         public bool NoContactCertainty(IConvex2D shape)

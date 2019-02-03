@@ -140,6 +140,7 @@ namespace SuperGrid2D
         public class DynamicCell2D : CellBase
         {
             protected override IEnumerable<UnitWrapper> _unitWrappers => _unitDictionary.Values;
+            public override int Count => _unitDictionary.Count;
             private Dictionary<TKey, UnitWrapper> _unitDictionary = new Dictionary<TKey, UnitWrapper>();
 
             public void Add(TKey key, UnitWrapper wrapper)

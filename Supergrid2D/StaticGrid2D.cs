@@ -64,6 +64,7 @@ namespace SuperGrid2D
         public class StaticCell : CellBase
         {
             protected override IEnumerable<UnitWrapper> _unitWrappers => _wrappedUnitList;
+            public override int Count => _wrappedUnitList.Count;
             protected List<UnitWrapper> _wrappedUnitList = new List<UnitWrapper>();
 
             public virtual void Add(UnitWrapper wrapper)

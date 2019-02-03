@@ -68,6 +68,9 @@ namespace SuperGrid2D
         public int Columns { get; private set; }
         public int Rows { get; private set; }
 
+        public float AverageUnitsPerCell { get; private set; }
+        public float AverageCellsSearched { get; private set; }
+
         protected TCell[,] _cells;
         protected abstract TCell _createNewCell(Vector2Int location);
 
@@ -245,8 +248,11 @@ namespace SuperGrid2D
         {
             _queryNumber++;
 
+            int cellsSearched = 0;
+
             foreach (Vector2Int cellIndex in shape.Supercover(this))
             {
+                cellsSearched++;
                 if (_cells[cellIndex.x, cellIndex.y] != null)
                 {
                     foreach (var wrapper in _cells[cellIndex.x, cellIndex.y].Contact(shape, (u) => true, _queryNumber))
@@ -254,6 +260,7 @@ namespace SuperGrid2D
                 }
             }
 
+            AverageCellsSearched = Mathf.Lerp(AverageCellsSearched, cellsSearched, 0.5f);
             return default(T);
         }
 
@@ -301,15 +308,22 @@ namespace SuperGrid2D
         {
             // Increment our query number to prevent yielding a unit multiple times if it spans more than one cell
             _queryNumber++;
+            int cellsSearched = 0;
+            int unitsAcc = 0;
 
             foreach (Vector2Int cellIndex in shape.Supercover(this))
             {
+                cellsSearched++;
                 if (_cells[cellIndex.x, cellIndex.y] != null)
                 {
+                    unitsAcc += _cells[cellIndex.x, cellIndex.y].Count;
                     foreach (var wrapper in _cells[cellIndex.x, cellIndex.y].Contact(shape, predicate, _queryNumber))
                         yield return wrapper.Unit;
                 }
             }
+
+            AverageCellsSearched = Mathf.Lerp(AverageCellsSearched, cellsSearched, 0.5f);
+            AverageUnitsPerCell = (float)unitsAcc / cellsSearched;
         }
 
 
@@ -346,6 +360,7 @@ namespace SuperGrid2D
         public abstract class CellBase
         {
             protected abstract IEnumerable<UnitWrapper> _unitWrappers { get; }
+            public abstract int Count { get; }
 
             /// <summary>
             /// Returns the nearest unit wrapper to position that is within limit and conforms to predicate
